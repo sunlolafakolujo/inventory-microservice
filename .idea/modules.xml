@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/appuser-service/appuser-service.iml" filepath="$PROJECT_DIR$/appuser-service/appuser-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eureka-service-registry/eureka-service-registry.iml" filepath="$PROJECT_DIR$/eureka-service-registry/eureka-service-registry.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/inventory-microservice.iml" filepath="$PROJECT_DIR$/.idea/inventory-microservice.iml" />
     </modules>
   </component>
