@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 @Service
 public class AddressServiceImpl implements AddressService {
@@ -17,6 +19,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address addAddress(Address address) {
+        address.setId(String.valueOf(10000+new Random().nextInt(LocalDateTime.now().getNano())));
         return addressRepository.save(address);
     }
 
