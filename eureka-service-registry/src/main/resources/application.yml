@@ -1,8 +1,10 @@
 server:
-  port: 9090
+  port: 8761
+
 spring:
   appication:
-    name: EUREKA-SERVICE-REGISTRY
+    name: SERVICE-REGISTRY
+
 eureka:
   instance:
     hostname: localhost

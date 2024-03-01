@@ -1,9 +1,7 @@
-package com.inventory.appuserservice.address.entity;
+package com.inventory.appuserservice.userrole.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -14,20 +12,18 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE address SET deleted= true WHERE id=?")
-@Where(clause = "deleted = false")
-public class Address {
-
+@Table(name = "roles")
+@SQLDelete(sql = "UPDATE roles SET deleted= true WHERE id=?")
+@Where(clause = "deleted=false")
+public class Role {
     @Id
     private String id;
-    private String fullAddress;
-    private String city;
-    private String landmark;
+    @Column(unique = true)
+    private String roleName;
 
-    @Column(name = "states")
-    private String state;
-    private String country;
+    private boolean deleted=Boolean.FALSE;
 
     @CreationTimestamp
     @Temporal(TemporalType.DATE)

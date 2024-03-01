@@ -22,13 +22,11 @@ spring:
     port: 2525
     username: a0dbe590d38dce
 
-
-
-
-
 eureka:
   instance:
     hostname: localhost
   client:
-    register-with-eureka: true
     fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: ${service-registry:http://localhost:8761/eureka}

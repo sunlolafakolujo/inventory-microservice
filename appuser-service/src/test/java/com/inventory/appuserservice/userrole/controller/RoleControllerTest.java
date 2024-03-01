@@ -1,10 +1,14 @@
-package com.inventory.appuserservice.address.controller;
+package com.inventory.appuserservice.userrole.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inventory.appuserservice.AbstractContainerBaseTest;
-import com.inventory.appuserservice.address.entity.Address;
-import com.inventory.appuserservice.address.service.AddressService;
-import org.junit.jupiter.api.*;
+import com.inventory.appuserservice.userrole.entity.Role;
+import com.inventory.appuserservice.userrole.service.RoleService;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,102 +23,90 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Slf4j
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class AddressControllerTest extends AbstractContainerBaseTest {
+class RoleControllerTest extends AbstractContainerBaseTest {
+    @Autowired
+    private RoleService roleService;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private AddressService addressService;
-    @Autowired
     private ObjectMapper objectMapper;
-
-    Address address;
+    Role role;
 
     @BeforeEach
     void setUp() {
-        address = new Address();
+        role = new Role();
     }
 
     @Test
-    @Order(1)
-    void testThatWhenYouCallAddAddressMethod_thenAddressIsAdded() throws Exception {
-        address.setFullAddress("1 Ona-Olapo Street Alajomeji");
-        address.setCity("Yaba");
-        address.setLandmark("Osanyin Street");
-        address.setState("Lagos");
-        address.setCountry("Nigeria");
-
-        this.mockMvc.perform(post("/api/address/addAddress")
+    void testThatWhenYouCallCreateRoleMethod_thenRoleIsCreated() throws Exception {
+        role.setRoleName("ADMIN");
+        this.mockMvc.perform(post("/api/roles/saveRole")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(address))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer ")
+                        .content(objectMapper.writeValueAsBytes(role))
                 ).andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$", notNullValue()))
-                .andExpect(jsonPath("$.city", is("Yaba")))
+                .andExpect(jsonPath("$.roleName", is("ROLE_ADMIN")))
                 .andReturn();
     }
 
     @Test
-    @Order(2)
-    void testThatWhenYouCallGetAddressByIdMethod_thenAddressIsReturned() throws Exception {
-        String id = "";
-        this.mockMvc.perform(get("/api/address/addressesId?id=" + id)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer ")
+    void testThatWhenYouCallGetRoleByNameOrIdMethod_thenRoleIsReturned() throws Exception {
+        String searchKey = "ADMIN";
+        this.mockMvc.perform(get("/api/roles/roleIdOrName?searchKey=" + searchKey)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ")
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", notNullValue()))
-                .andExpect(jsonPath("$.state", is("Lagos")))
+                .andExpect(jsonPath("$.id", is("")))
                 .andReturn();
     }
 
     @Test
-    @Order(3)
-    void testThatWhenYouCallGetAllAddressesMethod_thenAddressesAreReturned() throws Exception {
-        this.mockMvc.perform(get("/api/address/addresses?pageNumber=0&pageSize=9")
+    void testThatWhenYouCallGetAllRolesMethod_thenRolesAreReturned() throws Exception {
+        this.mockMvc.perform(get("/api/roles/allRoles?pageNumber=0&pageSize=6")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer ")
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.*", hasSize(3)))
-                .andExpect(jsonPath("$[1].landmark", is("")))
+                .andExpect(jsonPath("$.*", hasSize(4)))
+                .andExpect(jsonPath("$[1].roleName", is("MANAGER_SUPPLY_CHAIN")))
                 .andReturn();
     }
 
     @Test
-    @Order(4)
-    void updateAddress() throws Exception {
-        String id = "";
-        address = addressService.fetchAddressById(id);
-        address.setFullAddress("");
-        address.setCity("");
-        address.setLandmark("");
-        address.setState("");
-        address.setCountry("");
-        addressService.editAddress(address, id);
-
-        this.mockMvc.perform(put("/api/address/editAddress?id=" + id)
+    void testThatWhenYouCallUpdateRoleMethod_thenRoleIsUpdated() throws Exception {
+        String searchKey = "";
+        role = roleService.fetchByIdOrRoleName(searchKey);
+        role.setRoleName("");
+        roleService.editRole(role, searchKey);
+        this.mockMvc.perform(put("/api/roles/editRole?searchKey=" + searchKey)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer ")
-                        .content(objectMapper.writeValueAsString(address))
+                        .content(objectMapper.writeValueAsString(objectMapper))
                 ).andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(address.getId()))
-                .andExpect(jsonPath("$.fullAddress", is("")))
+                .andExpect(jsonPath("$.id").value(role.getId()))
+                .andExpect(jsonPath("$.roleName").value(role.getRoleName()))
                 .andReturn();
     }
 
     @Test
-    @Order(5)
-    void testThatWhenYouCallDeleteAddressMethod_thenAddressIsDeleted() throws Exception {
-        this.mockMvc.perform(delete("/api/address")
+    void testThatWhenYouCallDeleteRoleMethod_thenRoleIsDeleted() throws Exception {
+        String searchKey = "";
+        this.mockMvc.perform(delete("/api/roles/deleteRole?searchKey=" + searchKey)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer ")
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$", nullValue()))
                 .andReturn();
+        assertNull(role.getRoleName(), searchKey);
     }
 }
