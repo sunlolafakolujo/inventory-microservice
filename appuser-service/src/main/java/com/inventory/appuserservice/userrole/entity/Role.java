@@ -20,9 +20,9 @@ import java.util.Date;
 public class Role {
     @Id
     private String id;
+
     @Column(unique = true)
     private String roleName;
-
     private boolean deleted=Boolean.FALSE;
 
     @CreationTimestamp

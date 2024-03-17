@@ -15,7 +15,8 @@ public enum UserType {
     BUYER("Buyer"),
     MANAGER_PURCHASING("Manager Purchasing"),
     MANAGER_FINANCE("Manager Finance"),
-    SUPPLIER("Supplier");
+    SUPPLIER("Supplier"),
+    USER("User");
 
     private final String userType;
 }

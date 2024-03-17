@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -17,6 +20,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role saveRole(Role role) {
+        role.setId(String.valueOf(1000+new Random().nextInt(LocalTime.now().getNano())));
         return roleRepository.save(role);
     }
 
